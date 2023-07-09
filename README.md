@@ -7,7 +7,7 @@ Library contains bash script for installing requirements, printing colorful mess
 
 ## How to use it?
 
-Clone this repository into your dotfiles folder:
+Clone this repository into your dotfiles folder (here we are using [git-subtree](https://www.atlassian.com/git/tutorials/git-subtree)):
 
 ```bash
 mkdir scripts
