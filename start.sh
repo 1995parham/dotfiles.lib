@@ -109,7 +109,7 @@ _main() {
 		script="lib/new"
 		;;
 	"update")
-		git subtree add --prefix scripts/lib https://github.com/1995parham/dotfiles.lib.git main --squash
+		git subtree pull --prefix scripts/lib https://github.com/1995parham/dotfiles.lib.git main --squash
 		return 0
 		;;
 	esac
