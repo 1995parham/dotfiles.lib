@@ -17,7 +17,7 @@ git subtree add --prefix scripts/lib https://github.com/1995parham/dotfiles.lib.
 Then link the `start.sh` into your root's dotfiles:
 
 ```bash
-ln -s start.sh scripts/lib/start.sh
+ln -s scripts/lib/start.sh start.sh
 ```
 
 Then you can start creating your setup scripts using:
