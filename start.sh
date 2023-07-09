@@ -125,6 +125,7 @@ _main() {
 		host="${host%.*}"
 		source "$root/$host/scripts/$script.sh" 2>/dev/null || {
 			message "pre ""404 script not found for $host" "notice"
+			_usage
 			return 1
 		}
 
