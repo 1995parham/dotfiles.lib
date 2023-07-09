@@ -101,6 +101,15 @@ _main() {
 		script="list"
 	fi
 
+	case $script in
+	"list")
+		script="lib/list"
+		;;
+	"new")
+		script="lib/new"
+		;;
+	esac
+
 	start=$(date +%s)
 
 	# shellcheck disable=1090
