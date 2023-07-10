@@ -1,8 +1,8 @@
 <h1 align="center">1995parham's dotfiles library</h1>
 
 <p align="center">
-     <img alt="GitHub" src="https://img.shields.io/github/license/1995parham/dotfiles?logo=gnu&style=for-the-badge">
-     <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/1995parham/dotfiles/sh-lint.yaml?logo=github&style=for-the-badge&label=lint">
+     <img alt="GitHub" src="https://img.shields.io/github/license/1995parham/dotfiles.lib?logo=gnu&style=for-the-badge">
+     <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/1995parham/dotfiles.lib/sh-lint.yaml?logo=github&style=for-the-badge&label=lint">
      <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/1995parham/dotfiles.lib?style=for-the-badge">
 </p>
 
