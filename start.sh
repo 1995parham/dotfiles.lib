@@ -127,7 +127,7 @@ _main() {
 			return 1
 		}
 
-		message "run scirpt for specific host: $host" "notice"
+		message "pre" "run scirpt for specific host: $host" "notice"
 		root="$root/$host"
 	}
 
@@ -141,7 +141,7 @@ _main() {
 		return 0
 	}
 
-	message "run scirpt for specific host: $host" "notice"
+	message "pre" "run scirpt for specific host: $host" "notice"
 	root="$root/$host"
 
 	_run "$@"
