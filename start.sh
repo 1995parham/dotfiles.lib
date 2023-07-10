@@ -114,8 +114,6 @@ _main() {
 		;;
 	esac
 
-	start=$(date +%s)
-
 	# shellcheck disable=1090
 	source "$root/scripts/$script.sh" 2>/dev/null || {
 		message "pre ""404 script not found" "notice"
@@ -132,6 +130,23 @@ _main() {
 		root="$root/$host"
 	}
 
+	_run "$@"
+
+	local host
+	host="$(hostname)"
+	host="${host%.*}"
+	# shellcheck disable=1090
+	source "$root/$host/scripts/$script.sh" 2>/dev/null || {
+		return 0
+	}
+
+	root="$root/$host"
+
+	_run "$@"
+}
+
+_run() {
+	start=$(date +%s)
 	if [ $show_help = true ]; then
 		# prints the start.sh and the script helps
 		_usage
