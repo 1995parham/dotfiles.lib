@@ -39,4 +39,18 @@ main() {
 
 	echo
 	echo
+
+	local host
+	host="$(hostname)"
+	host="${host%.*}"
+
+	local script
+	for script in $(fd -e .sh -d 1 . "$root/$host/scripts" -x basename | sed -e "s/.sh$//" | sort); do
+		# shellcheck disable=1090
+		description=$(source "$root/$host/scripts/$script.sh" && usage | head -1)
+		msg "$script: $description"
+	done
+
+	echo
+	echo
 }
