@@ -200,7 +200,7 @@ _additionals() {
 				options="${options}y"
 			fi
 
-			"$root/start.sh" "$options" "$additional"
+			"$root/start.sh" "$options" "${additional[*]}"
 		fi
 	done
 }
@@ -224,7 +224,7 @@ _dependencies() {
 		fi
 
 		for dependency in "${dependencies[@]}"; do
-			"$root/start.sh" "$options" "$dependency"
+			"$root/start.sh" "$options" "${dependency[*]}"
 		done
 	fi
 }
