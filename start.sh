@@ -178,15 +178,16 @@ _run() {
 }
 
 _additionals() {
-	additionals=$*
+	declare -a additionals
+	additionals=("$@")
 
-	if [ -z "$additionals" ]; then
+	if [ "${#additionals[@]}" -eq 0 ]; then
 		return
 	fi
 
-	msg "additionals: $additionals"
+	msg "additionals: ${additionals[*]// /|}"
 
-	for additional in $additionals; do
+	for additional in "${additionals[@]}"; do
 		if yes_or_no "$script" "do you want to install $additional as an additional package?"; then
 			local options="-d"
 			if [ $yes_to_all = 1 ]; then
@@ -199,13 +200,14 @@ _additionals() {
 }
 
 _dependencies() {
-	dependencies=$*
+	declare -a dependencies
+	dependencies=("$@")
 
-	if [ -z "$dependencies" ]; then
+	if [ "${#dependencies[@]}" -eq 0 ]; then
 		return
 	fi
 
-	msg "dependencies: $dependencies"
+	msg "dependencies: ${dependencies[*]// /|}"
 
 	if yes_or_no "$script" "do you want to install dependencies?"; then
 		local options="-d"
@@ -213,7 +215,7 @@ _dependencies() {
 			options="${options}y"
 		fi
 
-		for dependency in $dependencies; do
+		for dependency in "${dependencies[@]}"; do
 			"$root/start.sh" "$options" "$dependency"
 		done
 	fi
