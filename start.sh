@@ -164,6 +164,7 @@ _run() {
 		if ! [[ "$(declare -p dependencies)" =~ "declare -a" ]]; then
 			declare -a dependencies=()
 		fi
+		msg "dependencies: ${dependencies[*]// /|}"
 		_dependencies "${dependencies[@]}"
 
 		run "$@"
