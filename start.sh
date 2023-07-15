@@ -164,7 +164,6 @@ _run() {
 		if ! [[ "$(declare -p dependencies)" =~ "declare -a" ]]; then
 			declare -a dependencies=()
 		fi
-		msg "dependencies: ${dependencies[*]// /|}"
 		_dependencies "${dependencies[@]}"
 
 		run "$@"
@@ -190,7 +189,9 @@ _additionals() {
 		return
 	fi
 
-	msg "additionals: ${additionals[*]// /|}"
+	output=$(echo -n "additionals: |")
+	output="$output"$(printf "%s|" "${additionals[@]}")
+	msg "$output"
 
 	for additional in "${additionals[@]}"; do
 		if yes_or_no "$script" "do you want to install $additional as an additional package?"; then
@@ -212,7 +213,9 @@ _dependencies() {
 		return
 	fi
 
-	msg "dependencies: ${dependencies[*]// /|}"
+	output=$(echo -n "dependencies: |")
+	output="$output"$(printf "%s|" "${dependencies[@]}")
+	msg "$output"
 
 	if yes_or_no "$script" "do you want to install dependencies?"; then
 		local options="-d"
