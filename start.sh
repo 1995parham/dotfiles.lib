@@ -194,7 +194,9 @@ _additionals() {
 	msg "$output"
 
 	for additional in "${additionals[@]}"; do
-		if yes_or_no "$script" "do you want to install $additional as an additional package?"; then
+		read -ra additional <<<"$additional"
+
+		if yes_or_no "$script" "do you want to install ${additional[0]} as an additional package?"; then
 			local options="-d"
 			if [ $yes_to_all = 1 ]; then
 				options="${options}y"
@@ -224,6 +226,7 @@ _dependencies() {
 		fi
 
 		for dependency in "${dependencies[@]}"; do
+			read -ra dependency <<<"$dependency"
 			"$root/start.sh" "$options" "${dependency[*]}"
 		done
 	fi
