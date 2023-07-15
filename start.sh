@@ -28,7 +28,7 @@ _end() {
 
 _usage() {
 	echo ""
-	echo "usage: $program_name [-y] [-h] [-f] script [script options]"
+	echo "usage: $program_name [-y] [-h] script [script options]"
 	echo "  -h   display help"
 	echo "  -d   as dependency (internal usage)"
 	echo "  -y   yes to all"
