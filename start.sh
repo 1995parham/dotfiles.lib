@@ -55,7 +55,7 @@ _main() {
 	######################
 
 	# parses options flags
-	while getopts 'fdhy' argv; do
+	while getopts 'dhy' argv; do
 		case $argv in
 		h)
 			show_help=true
@@ -161,14 +161,14 @@ _run() {
 
 		# handle dependencies by executing the start.sh
 		# for each of them separately
-		dependencies=${dependencies:-""}
+		declare -a dependencies
 		_dependencies "${dependencies[@]}"
 
 		run "$@"
 
 		# handle additional packages by executing the start.sh
 		# for each of them separately
-		additionals=${additionals:-""}
+		declare -a additionals
 		_additionals "${additionals[@]}"
 	fi
 
