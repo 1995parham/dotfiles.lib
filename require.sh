@@ -2,9 +2,9 @@
 
 function require_country() {
 	country=$1
-	current_country="$(curl ipconfig.io/country)"
+	current_country="$(curl -s ipconfig.io/country)"
 	if [ "$current_country" != "$country" ]; then
-		message "country" "please be in $country instead of $current_country" "error"
+		message "country" "󰈻 please be in $country instead of $current_country" "error"
 		return 1
 	fi
 
