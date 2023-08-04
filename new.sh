@@ -38,8 +38,9 @@ main() {
 	host="${host%.*}"
 	if yes_or_no "do you want to be $host specific? "; then
 		root="$root/$host"
-		mkdir -p "$root" || true
 	fi
+
+	mkdir -p "$root/scripts" || true
 
 	if [ -f "$root/scripts/$name.sh" ]; then
 		msg "$name already exists" "error"
