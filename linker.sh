@@ -41,7 +41,7 @@ copycat() {
 }
 
 # creates a config file that resides in the `home` directory, and provides a soft link to it.
-# it can handle two following cased:
+# it can handle two following cases:
 # link $root/$module/$file to ~/.$file
 # link $root/$module to ~/.$module
 # parameter 1: module name - string
