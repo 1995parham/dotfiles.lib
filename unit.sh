@@ -37,6 +37,7 @@ set -o pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# shellcheck source=message.sh
 source "$root/message.sh"
 
 declare -F | while read -r unit_test; do

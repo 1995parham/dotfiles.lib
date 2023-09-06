@@ -2,6 +2,7 @@
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# shellcheck source=../require.sh
 source "$root/../require.sh"
 
 test_require_host_success() {
@@ -12,4 +13,5 @@ test_require_host_failed() {
 	assert_retval require_host "github.home" 1
 }
 
+# shellcheck source=../unit.sh
 source "$root/../unit.sh"
