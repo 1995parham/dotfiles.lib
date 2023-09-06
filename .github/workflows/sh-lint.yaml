@@ -13,3 +13,12 @@ jobs:
         uses: luizm/action-sh-checker@v0.7.0
         with:
           sh_checker_comment: false
+
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test units
+        run: |
+          for f in tests/*.sh; do
+            bash "$f" -H || break
+          done
