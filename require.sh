@@ -289,7 +289,7 @@ function _add_systemd_kernel_parameter() {
 
 	local kernel_paramters
 	declare -a kernel_paramters
-	IFS=' ' read -ra kernel_paramters <<<"$(grep kernel_paramters "$configuration")"
+	IFS=' ' read -ra kernel_paramters <<<"$(grep options "$configuration")"
 
 	local output
 	output=$(echo -n "current kernel_paramters: |")
@@ -304,7 +304,7 @@ function _add_systemd_kernel_parameter() {
 	done
 	kernel_paramters+=("$new_kernel_parameter")
 
-	sudo sed -i -e "s|^kernel_paramters.*$|${kernel_paramters[*]}|" "$configuration"
+	sudo sed -i -e "s|^options.*$|${kernel_paramters[*]}|" "$configuration"
 }
 
 function _remove_systemd_kernel_parameter() {
@@ -313,7 +313,7 @@ function _remove_systemd_kernel_parameter() {
 
 	local kernel_paramters
 	declare -a kernel_paramters
-	IFS=' ' read -ra kernel_paramters <<<"$(grep kernel_paramters "$configuration")"
+	IFS=' ' read -ra kernel_paramters <<<"$(grep options "$configuration")"
 
 	local output
 	output=$(echo -n "current kernel_paramters: |")
@@ -329,6 +329,6 @@ function _remove_systemd_kernel_parameter() {
 	done
 
 	if [ "$found" -eq 1 ]; then
-		sudo sed -i -e "s|^kernel_paramters.*$|${kernel_paramters[*]}|" "$configuration"
+		sudo sed -i -e "s|^options.*$|${kernel_paramters[*]}|" "$configuration"
 	fi
 }
