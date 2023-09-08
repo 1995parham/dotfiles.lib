@@ -264,8 +264,10 @@ function require_systemd_kernel_parameter() {
 	local new_kernel_parameter=${1:?"new parameter required"}
 
 	for configuration in /boot/loader/entries/*.conf; do
+		echo
 		message 'systemd-boot' "updating $configuration"
-		message 'systemd-boot' "$(grep kernel_parameters "$configuration")"
+		echo
+		message 'systemd-boot' "$(grep options "$configuration")"
 
 		case "$new_kernel_parameter" in
 		+*)
@@ -279,7 +281,9 @@ function require_systemd_kernel_parameter() {
 			;;
 		esac
 
-		message 'systemd-boot' "$(grep kernel_parameters "$configuration")"
+		message 'systemd-boot' "$(grep options "$configuration")"
+		echo
+		echo
 	done
 }
 
