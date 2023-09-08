@@ -265,6 +265,7 @@ function require_systemd_kernel_parameter() {
 
 	for configuration in /boot/loader/entries/*.conf; do
 		message 'systemd-boot' "updating $configuration"
+		message 'systemd-boot' "$(grep options "$configuration")"
 
 		case "$new_option" in
 		+*)
@@ -277,6 +278,8 @@ function require_systemd_kernel_parameter() {
 			_add_systemd_kernel_parameter "$configuration" "$new_option"
 			;;
 		esac
+
+		message 'systemd-boot' "$(grep options "$configuration")"
 	done
 }
 
