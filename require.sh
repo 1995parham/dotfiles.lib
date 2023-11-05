@@ -158,7 +158,7 @@ function require_pip() {
 
 		action "require" " python $name"
 		if (pipx list | grep "$name" &>/dev/null); then
-			pipx upgrade --pip-args pre "$pkg"
+			pipx upgrade --pip-args pre "$name"
 		else
 			pipx install --include-deps --pip-args pre "$pkg"
 		fi
