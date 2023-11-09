@@ -9,7 +9,6 @@ function run_editor_before() {
 
 function run_verbose() {
 	print -S "echo $*" || history -s "$*"
-	set -x
+	action "run" "$*"
 	"$@"
-	set +x
 }
