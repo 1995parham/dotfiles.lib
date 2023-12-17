@@ -14,10 +14,10 @@ Whether you're setting up a new system or tailoring an existing one, these tools
 
 ## Features
 
-- **Easy Installation**: Jumpstart your environment setup with scripts that handle the installation of prerequisites.
-- **Vibrant Feedback**: Enjoy colorful console messages that make tracking your progress a visual treat.
-- **Proxy Configuration**: Simplify the complex task of proxy settings with dedicated scripts.
-- **And More**: The library is growing—more convenient scripts will continually enrich your setup experience.
+- **Easy Installation 🚀**: Jumpstart your environment setup with scripts that handle the installation of prerequisites.
+- **Vibrant Feedback 🌈**: Enjoy colorful console messages that make tracking your progress a visual treat.
+- **Proxy Configuration 🇮🇷**: Simplify the complex task of proxy settings with dedicated scripts.
+- **And More ✨**: The library is growing—more convenient scripts will continually enrich your setup experience.
 
 Explore **dotfile.lib** and make dotfile management something you look forward to.
 
