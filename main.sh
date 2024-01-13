@@ -19,5 +19,7 @@ if [ -n "$root" ]; then
 fi
 # shellcheck source=require.sh
 source "$dotfile_lib_root/require.sh"
+# shellcheck source=semver.sh
+source "$dotfile_lib_root/semver.sh"
 # shellcheck source=run.sh
 source "$dotfile_lib_root/run.sh"
