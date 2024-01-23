@@ -25,7 +25,7 @@ assert_retval() {
 	value="$?"
 
 	if [[ "${value}" -ne "${expect}" ]]; then
-		message "assert" "expects ${expect} but found ${value}" "error"
+		message "assert" "expects ${expect} during the execution of \"${args[*]}\" but found ${value}" "error"
 		return 1
 	fi
 
