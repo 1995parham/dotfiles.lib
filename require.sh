@@ -275,7 +275,8 @@ function clone() {
       if [[ "${url}" == "${origin_url%.git}" ]]; then
         action git "${repo_name} ${origin} -> ${url} ${F_GRAY}󰄲${F_RESET}"
       else
-        action git "${repo_name} ${origin} -> ${url} ${F_RED}󱋭${F_RESET}"
+        git remote remove "${origin}"
+        git remote add "${origin}" "${url}"
       fi
     else
       if git remote add "${origin}" "${url}" &>/dev/null; then
