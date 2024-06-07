@@ -228,7 +228,12 @@ function clone() {
 	repo=${1:?"clone requires repository"}
 	path=${2:-"."}
 	dir=${3:-""}
-	shift 3
+
+	if [[ $# -le 3 ]]; then
+		shift $#
+	else
+		shift 3
+	fi
 
 	if [[ ! -d "${path}" ]]; then
 		mkdir -p "${path}"
