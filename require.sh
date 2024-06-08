@@ -274,7 +274,7 @@ function clone() {
 
 		cd "${path}/${dir}" || return
 
-		if git config --get "remote.${origin}.url"; then
+		if git config --get "remote.${origin}.url" &>/dev/null; then
 			origin_url=$(git config --get "remote.${origin}.url")
 
 			if [[ "${url}" == "${origin_url%.git}" ]]; then
