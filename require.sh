@@ -275,6 +275,7 @@ function clone() {
 		cd "${path}/${dir}" || return
 
 		git remote set-url --delete origin "${url}" || true
+		git remote set-url --delete --push origin "${url}" || true
 
 		if git remote get-url origin --all 2>/dev/null | grep "$url"; then
 			action git "${repo_name} pushurl -> ${url} ${F_GRAY}󰄲${F_RESET}"
