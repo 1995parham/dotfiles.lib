@@ -266,16 +266,11 @@ function clone() {
 		cd - &>/dev/null || return
 	fi
 
-	git remote remove github || true
-
 	if [[ "$#" -ge 1 ]]; then
 		url="$1"
 		shift 1
 
 		cd "${path}/${dir}" || return
-
-		git remote set-url --delete origin "${url}" || true
-		git remote set-url --delete --push origin "${url}" || true
 
 		if git remote get-url origin --all 2>/dev/null | grep "$url"; then
 			action git "${repo_name} pushurl -> ${url} ${F_GRAY}󰄲${F_RESET}"
@@ -286,8 +281,6 @@ function clone() {
 				action git "${repo_name} pushurl -> ${url} ${F_RED}󱋭${F_RESET}"
 			fi
 		fi
-
-		git remote -v
 
 		cd - &>/dev/null || return
 	fi
