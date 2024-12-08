@@ -260,7 +260,7 @@ function require_hosts_record() {
     host_entry=$(printf "%s\%s" "${address}" "${name}")
 
     if [ -n "$matches_in_hosts" ]; then
-        message "hosts" "updating existing hosts entry."
+        message "hosts" "updating existing hosts entry"
 
         # iterate over the line numbers on which matches were found
         while read -r line_number; do
@@ -268,7 +268,7 @@ function require_hosts_record() {
             sudo sed -i '' "${line_number}s/.*/${host_entry} /" /etc/hosts
         done <<<"$matches_in_hosts"
     else
-        message "hosts" "adding new hosts entry."
+        message "hosts" "adding new hosts entry"
         echo "$host_entry" | sudo tee -a /etc/hosts >/dev/null
     fi
 }
