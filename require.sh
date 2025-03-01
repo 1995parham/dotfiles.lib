@@ -109,20 +109,6 @@ function require_brew_cask() {
     done
 }
 
-# install packages using brew cask fetch-HEAD
-function require_brew_cask_head() {
-    for pkg in "$@"; do
-        running "require" " brew cask head ${pkg}"
-        if ! brew list --cask --versions "${pkg}" &>/dev/null; then
-            action "require" " brew install --cask --fetch ${pkg}"
-            brew install --cask --fetch "${pkg}"
-        else
-            action "require" " brew upgrade --fetch-HEAD ${pkg}"
-            brew upgrade --fetch-HEAD "${pkg}"
-        fi
-    done
-}
-
 # install packages using apt
 function require_apt() {
     declare -a to_install_pkg
