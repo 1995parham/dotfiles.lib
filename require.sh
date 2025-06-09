@@ -167,7 +167,7 @@ function require_xbps() {
 function require_aur() {
     for pkg in "$@"; do
         running "require" " arch users repository ${pkg}"
-        if (! pacman -Qi "${pkg}" &>/dev/null); then
+        if (! pacman -Q "${pkg}" &>/dev/null); then
             action "require" " yay -Sy ${pkg}"
             yay -Sy --sudoloop --noconfirm "${pkg}"
         elif [[ "${pkg}" =~ .*-git ]]; then
