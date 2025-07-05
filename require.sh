@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-# ip_country_url="https://api.ipquery.io/?format=json"
-
-ip_country_url="https://api.ipapi.is"
+ip_country_url="https://api.ipquery.io/?format=json"
+# ip_country_url="https://api.ipapi.is"
 
 # check being in the specific country
 function require_country() {
