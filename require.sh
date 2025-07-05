@@ -174,6 +174,16 @@ function require_xbps() {
 
 # install packages from AUR using yay
 function require_aur() {
+    if [[ -z "$(command -v yay)" ]]; then
+        message "require" "yay command does not exist, so there is no support for aur, use 'allow_no_aur' to bypass aur" "error"
+
+        if [[ "$allow_no_aur" ]]; then
+            return 0
+        else
+            return 1
+        fi
+    fi
+
     for pkg in "$@"; do
         running "require" " arch users repository ${pkg}"
         if (! pacman -Q "${pkg}" &>/dev/null); then
