@@ -172,11 +172,11 @@ function progress_bar() {
     local filled=$((current * width / total))
     local empty=$((width - filled))
 
-    printf "\r${F_INFO}${prefix}: ${F_SUCCESS}"
+    echo -e "\r${F_INFO}${prefix}: ${F_SUCCESS}"
     printf "%*s" ${filled} | tr ' ' "${PROGRESS_FULL}"
-    printf "${F_GRAY}"
+    echo -e "${F_GRAY}"
     printf "%*s" ${empty} | tr ' ' "${PROGRESS_EMPTY}"
-    printf "${F_INFO} %d%% (%d/%d)${ALL_RESET}" ${percentage} ${current} ${total}
+    printf "${F_INFO} %d%% (%d/%d)${ALL_RESET}" "${percentage}" "${current}" "${total}"
 }
 
 function spinner() {
@@ -185,13 +185,13 @@ function spinner() {
     local delay=0.1
     local i=0
 
-    while [ -d /proc/$pid ]; do
+    while [ -d "/proc/$pid" ]; do
         local char=${SPINNER_CHARS:$((i % ${#SPINNER_CHARS})):1}
-        printf "\r${F_HIGHLIGHT}${char} ${message}${ALL_RESET}"
+        echo -e "\r${F_HIGHLIGHT}${char} ${message}${ALL_RESET}"
         sleep $delay
         ((i++))
     done
-    printf "\r${CLEAR_LINE}"
+    echo -e "\r${CLEAR_LINE}"
 }
 
 function section_header() {
@@ -201,9 +201,9 @@ function section_header() {
 
     echo
     echo -e "${F_ACCENT}${BOLD_ON}"
-    printf "%*s\n" $width | tr ' ' "$char"
+    printf "%*s\n" "$width" "" | tr ' ' "$char"
     printf " %s \n" "$title"
-    printf "%*s\n" $width | tr ' ' "$char"
+    printf "%*s\n" "$width" "" | tr ' ' "$char"
     echo -e "${ALL_RESET}"
 }
 
@@ -213,25 +213,25 @@ function list_item() {
     local indent=${3:-0}
 
     local prefix=""
-    for ((i=0; i<indent; i++)); do
+    for ((i = 0; i < indent; i++)); do
         prefix="  $prefix"
     done
 
     case $status in
-        "success"|"done"|"✓")
-            echo -e "${prefix}${F_SUCCESS}${CHECK_MARK} ${item}${ALL_RESET}"
-            ;;
-        "error"|"failed"|"✗")
-            echo -e "${prefix}${F_ERROR}${CROSS_MARK} ${item}${ALL_RESET}"
-            ;;
-        "warning"|"warn"|"⚠")
-            echo -e "${prefix}${F_WARNING}${WARNING_MARK} ${item}${ALL_RESET}"
-            ;;
-        "info"|"ⓘ")
-            echo -e "${prefix}${F_INFO}${INFO_MARK} ${item}${ALL_RESET}"
-            ;;
-        *)
-            echo -e "${prefix}${F_ACCENT}${BULLET_MARK} ${item}${ALL_RESET}"
-            ;;
+    "success" | "done" | "✓")
+        echo -e "${prefix}${F_SUCCESS}${CHECK_MARK} ${item}${ALL_RESET}"
+        ;;
+    "error" | "failed" | "✗")
+        echo -e "${prefix}${F_ERROR}${CROSS_MARK} ${item}${ALL_RESET}"
+        ;;
+    "warning" | "warn" | "⚠")
+        echo -e "${prefix}${F_WARNING}${WARNING_MARK} ${item}${ALL_RESET}"
+        ;;
+    "info" | "ⓘ")
+        echo -e "${prefix}${F_INFO}${INFO_MARK} ${item}${ALL_RESET}"
+        ;;
+    *)
+        echo -e "${prefix}${F_ACCENT}${BULLET_MARK} ${item}${ALL_RESET}"
+        ;;
     esac
 }
