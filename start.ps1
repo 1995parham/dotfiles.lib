@@ -17,8 +17,8 @@
 #>
 
 param(
-    [Parameter(Position=0)]
-    [string]$ScriptName = "",
+    [Parameter(Position=0,Mandatory=$True)]
+    [string]$ScriptName,
     [switch]$Help,
     [Alias('y')]
     [switch]$YesToAll
