@@ -68,8 +68,7 @@ _resolve_script_name() {
         echo "lib/new"
         ;;
     "update")
-        git subtree pull --prefix scripts/lib https://github.com/1995parham/dotfiles.lib.git main --squash
-        exit 0
+        echo "lib/update"
         ;;
     *)
         echo "${script}"
