@@ -168,10 +168,6 @@ _main() {
     # Resolve script name (handle list/new/update)
     script=$(_resolve_script_name "${script}")
 
-    if [[ -z "$script" ]]; then
-        exit 0
-    fi
-
     # Execute all matching scripts (general + host-specific)
     _execute_scripts "${script}" "$@"
 }
