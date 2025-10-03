@@ -76,7 +76,7 @@ function Resolve-ScriptName {
 function Resolve-ScriptPath {
     param([string]$Script)
 
-    $scriptPath = Join-Path $script:mainRoot "scripts\$Script.ps1"
+    $scriptPath = Join-Path $script:mainRoot "..\$Script.ps1"
 
     if (Test-Path $scriptPath) {
         return $scriptPath
