@@ -335,10 +335,12 @@ function clone() {
 
     if [[ ! -d "${path}/${dir}" ]]; then
         running git "cloning ${repo_name}..."
+        # Unbuffer stderr and stdout for git clone progress
         if git clone --progress "${repo}" "${path}/${dir}" 2>&1 | {
-            while IFS= read -r line; do
+            stdbuf -oL -eL cat | while IFS= read -r line; do
                 # Extract percentage from git progress output
-                if [[ "${line}" =~ ([0-9]+)%.*\(([0-9]+)/([0-9]+)\) ]]; then
+                # Git format: "Receiving objects:  50% (100/200)" or "Resolving deltas:  50% (100/200)"
+                if [[ "${line}" =~ ([0-9]+)%[[:space:]]*\(([0-9]+)/([0-9]+)\) ]]; then
                     percent="${BASH_REMATCH[1]}"
                     current="${BASH_REMATCH[2]}"
                     total="${BASH_REMATCH[3]}"
