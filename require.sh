@@ -307,6 +307,91 @@ function require_hosts_record() {
     fi
 }
 
+# install binary from GitHub releases
+function require_github_release() {
+    local repo=${1:?"GitHub repo (owner/name) is required"}
+    local binary_name=${2:?"binary name is required"}
+    local platform=${3:?"platform string is required (e.g., x86_64-unknown-linux-gnu)"}
+    local archive_ext=${4:-"tar.gz"}
+
+    local install_dir="${HOME}/.local/bin"
+    mkdir -p "${install_dir}"
+
+    # Check if binary already exists
+    if [[ -f "${install_dir}/${binary_name}" ]]; then
+        running "require" " github-release ${repo} (already installed)"
+        return 0
+    fi
+
+    action "require" " github-release ${repo} for ${platform}"
+
+    # Get latest release version
+    local version
+    version=$(curl -fsSL "https://api.github.com/repos/${repo}/releases/latest" | \
+        grep '"tag_name":' | sed -E 's/.*"v?([^"]+)".*/\1/')
+
+    if [[ -z "${version}" ]]; then
+        message "github-release" "Failed to fetch latest version for ${repo}" "error"
+        return 1
+    fi
+
+    message "github-release" "Installing version ${version}" "info"
+
+    # Construct download URL
+    local download_url="https://github.com/${repo}/releases/download/v${version}/${binary_name}-${platform}.${archive_ext}"
+    local temp_dir
+    temp_dir=$(mktemp -d)
+    local temp_file="${temp_dir}/archive.${archive_ext}"
+
+    # Download the archive
+    if ! curl -fsSL -o "${temp_file}" "${download_url}"; then
+        message "github-release" "Failed to download from ${download_url}" "error"
+        rm -rf "${temp_dir}"
+        return 1
+    fi
+
+    # Extract based on archive type
+    case "${archive_ext}" in
+        tar.gz|tgz)
+            tar -xzf "${temp_file}" -C "${temp_dir}"
+            ;;
+        tar.xz)
+            tar -xJf "${temp_file}" -C "${temp_dir}"
+            ;;
+        zip)
+            unzip -q "${temp_file}" -d "${temp_dir}"
+            ;;
+        *)
+            message "github-release" "Unsupported archive type: ${archive_ext}" "error"
+            rm -rf "${temp_dir}"
+            return 1
+            ;;
+    esac
+
+    # Find and install the binary
+    if [[ -f "${temp_dir}/${binary_name}" ]]; then
+        chmod +x "${temp_dir}/${binary_name}"
+        mv "${temp_dir}/${binary_name}" "${install_dir}/"
+    else
+        message "github-release" "Binary ${binary_name} not found in archive" "error"
+        rm -rf "${temp_dir}"
+        return 1
+    fi
+
+    # Clean up
+    rm -rf "${temp_dir}"
+
+    message "github-release" "Successfully installed ${binary_name} to ${install_dir}" "success"
+
+    # Check if install_dir is in PATH
+    if ! echo "${PATH}" | grep -q "${install_dir}"; then
+        message "github-release" "${install_dir} is not in your PATH" "warn"
+        message "github-release" "Add 'export PATH=\"\$PATH:${install_dir}\"' to your shell config" "notice"
+    fi
+
+    return 0
+}
+
 function require_systemd_kernel_parameter() {
     local new_kernel_parameter=${1:?"new parameter required"}
 
