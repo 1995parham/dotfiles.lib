@@ -312,7 +312,7 @@ function require_github_release() {
     local repo=${1:?"GitHub repo (owner/name) is required"}
     local binary_name=${2:?"binary name is required"}
     local platform=${3:?"platform string is required (e.g., x86_64-unknown-linux-gnu)"}
-    local archive_ext=${4:-"tar.gz"}
+    local archive_ext=${4:-""}
 
     local install_dir="${HOME}/.local/bin"
     mkdir -p "${install_dir}"
@@ -327,7 +327,7 @@ function require_github_release() {
 
     # Get latest release version
     local version
-    version=$(curl -fsSL "https://api.github.com/repos/${repo}/releases/latest" | \
+    version=$(curl -fsSL "https://api.github.com/repos/${repo}/releases/latest" |
         grep '"tag_name":' | sed -E 's/.*"v?([^"]+)".*/\1/')
 
     if [[ -z "${version}" ]]; then
@@ -338,7 +338,11 @@ function require_github_release() {
     message "github-release" "Installing version ${version}" "info"
 
     # Construct download URL
-    local download_url="https://github.com/${repo}/releases/download/v${version}/${binary_name}-${platform}.${archive_ext}"
+    if [ -n "$archive_ext" ]; then
+        local download_url="https://github.com/${repo}/releases/download/v${version}/${binary_name}-${platform}.${archive_ext}"
+    else
+        local download_url="https://github.com/${repo}/releases/download/v${version}/${binary_name}-${platform}"
+    fi
     local temp_dir
     temp_dir=$(mktemp -d)
     local temp_file="${temp_dir}/archive.${archive_ext}"
@@ -352,20 +356,23 @@ function require_github_release() {
 
     # Extract based on archive type
     case "${archive_ext}" in
-        tar.gz|tgz)
-            tar -xzf "${temp_file}" -C "${temp_dir}"
-            ;;
-        tar.xz)
-            tar -xJf "${temp_file}" -C "${temp_dir}"
-            ;;
-        zip)
-            unzip -q "${temp_file}" -d "${temp_dir}"
-            ;;
-        *)
-            message "github-release" "Unsupported archive type: ${archive_ext}" "error"
-            rm -rf "${temp_dir}"
-            return 1
-            ;;
+    tar.gz | tgz)
+        tar -xzf "${temp_file}" -C "${temp_dir}"
+        ;;
+    tar.xz)
+        tar -xJf "${temp_file}" -C "${temp_dir}"
+        ;;
+    zip)
+        unzip -q "${temp_file}" -d "${temp_dir}"
+        ;;
+    "")
+        mv "${temp_file}" "${temp_dir}/${binary_name}"
+        ;;
+    *)
+        message "github-release" "Unsupported archive type: ${archive_ext}" "error"
+        rm -rf "${temp_dir}"
+        return 1
+        ;;
     esac
 
     # Find and install the binary
