@@ -365,6 +365,36 @@ function require_github_release() {
     zip)
         unzip -q "${temp_file}" -d "${temp_dir}"
         ;;
+    dmg)
+        # Mount the DMG
+        message "github-release" "Mounting DMG..." "info"
+        local mount_point
+        mount_point=$(hdiutil attach "${temp_file}" -nobrowse -readonly | grep '/Volumes/' | awk '{print $3}')
+
+        if [[ -z "${mount_point}" ]]; then
+            message "github-release" "Failed to mount DMG" "error"
+            rm -rf "${temp_dir}"
+            return 1
+        fi
+
+        # Find .app bundle in the mounted volume
+        local app_bundle
+        app_bundle=$(find "${mount_point}" -maxdepth 1 -name "*.app" -print -quit)
+
+        if [[ -z "${app_bundle}" ]]; then
+            message "github-release" "No .app bundle found in DMG" "error"
+            hdiutil detach "${mount_point}" -quiet
+            rm -rf "${temp_dir}"
+            return 1
+        fi
+
+        # Copy the app to /Applications
+        message "github-release" "Installing app to /Applications..." "info"
+        sudo cp -R "${app_bundle}" /Applications/
+
+        # Unmount the DMG
+        hdiutil detach "${mount_point}" -quiet
+        ;;
     "")
         mv "${temp_file}" "${temp_dir}/${binary_name}"
         ;;
@@ -375,14 +405,16 @@ function require_github_release() {
         ;;
     esac
 
-    # Find and install the binary
-    if [[ -f "${temp_dir}/${binary_name}" ]]; then
-        chmod +x "${temp_dir}/${binary_name}"
-        mv "${temp_dir}/${binary_name}" "${install_dir}/"
-    else
-        message "github-release" "Binary ${binary_name} not found in archive" "error"
-        rm -rf "${temp_dir}"
-        return 1
+    # Find and install the binary (skip for DMG as it's already handled)
+    if [[ "${archive_ext}" != "dmg" ]]; then
+        if [[ -f "${temp_dir}/${binary_name}" ]]; then
+            chmod +x "${temp_dir}/${binary_name}"
+            mv "${temp_dir}/${binary_name}" "${install_dir}/"
+        else
+            message "github-release" "Binary ${binary_name} not found in archive" "error"
+            rm -rf "${temp_dir}"
+            return 1
+        fi
     fi
 
     # Clean up
