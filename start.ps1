@@ -174,11 +174,15 @@ function Invoke-Dependencies {
     }
 }
 
-begin {
+function Main {
     Show-Header
-}
 
-process {
+    if (-not $ScriptName) {
+        Show-Usage
+        $ScriptName = "list"
+    }
+
+    # Resolve script name
     $resolvedScript = Resolve-ScriptName -Script $ScriptName
     $scriptPath = Resolve-ScriptPath -Script $resolvedScript
 
@@ -188,6 +192,7 @@ process {
         exit 1
     }
 
+    # Load and execute the script
     try {
         . $scriptPath
         Invoke-ScriptRun -ScriptArgs $args
@@ -197,3 +202,5 @@ process {
         exit 1
     }
 }
+
+exit (Main)
