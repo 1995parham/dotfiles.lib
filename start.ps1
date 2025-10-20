@@ -175,6 +175,9 @@ function Invoke-Dependencies {
 }
 
 function Main {
+    [CmdletBinding()]
+    param()
+
     Show-Header
 
     if (-not $ScriptName) {
