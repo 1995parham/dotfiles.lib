@@ -311,7 +311,7 @@ function require_hosts_record() {
 function require_github_release() {
     local repo=${1:?"GitHub repo (owner/name) is required"}
     local binary_name=${2:?"binary name is required"}
-    local platform=${3:?"platform string is required (e.g., x86_64-unknown-linux-gnu)"}
+    local release_name=${3:?"release name is required (e.g., clash-aarch64-apple-darwin)"}
     local archive_ext=${4:-""}
 
     local install_dir="${HOME}/.local/bin"
@@ -323,9 +323,8 @@ function require_github_release() {
         return 0
     fi
 
-    action "require" " github-release ${repo} for ${platform}"
+    action "require" " github-release ${repo}"
 
-    # Get latest release version
     local version
     version=$(curl -fsSL "https://api.github.com/repos/${repo}/releases/latest" |
         grep '"tag_name":' | sed -E 's/.*"v?([^"]+)".*/\1/')
@@ -337,24 +336,21 @@ function require_github_release() {
 
     message "github-release" "Installing version ${version}" "info"
 
-    # Construct download URL
     if [ -n "$archive_ext" ]; then
-        local download_url="https://github.com/${repo}/releases/download/v${version}/${binary_name}-${platform}.${archive_ext}"
+        local download_url="https://github.com/${repo}/releases/download/v${version}/${release_name}.${archive_ext}"
     else
-        local download_url="https://github.com/${repo}/releases/download/v${version}/${binary_name}-${platform}"
+        local download_url="https://github.com/${repo}/releases/download/v${version}/${release_name}"
     fi
     local temp_dir
     temp_dir=$(mktemp -d)
     local temp_file="${temp_dir}/archive.${archive_ext}"
 
-    # Download the archive
     if ! curl -fsSL -o "${temp_file}" "${download_url}"; then
         message "github-release" "Failed to download from ${download_url}" "error"
         rm -rf "${temp_dir}"
         return 1
     fi
 
-    # Extract based on archive type
     case "${archive_ext}" in
     tar.gz | tgz)
         tar -xzf "${temp_file}" -C "${temp_dir}"
@@ -366,7 +362,6 @@ function require_github_release() {
         unzip -q "${temp_file}" -d "${temp_dir}"
         ;;
     dmg)
-        # Mount the DMG
         message "github-release" "Mounting DMG..." "info"
         local mount_point
         mount_point=$(hdiutil attach "${temp_file}" -nobrowse -readonly | grep '/Volumes/' | awk '{print $3}')
@@ -377,7 +372,6 @@ function require_github_release() {
             return 1
         fi
 
-        # Find .app bundle in the mounted volume
         local app_bundle
         app_bundle=$(find "${mount_point}" -maxdepth 1 -name "*.app" -print -quit)
 
@@ -388,11 +382,9 @@ function require_github_release() {
             return 1
         fi
 
-        # Copy the app to /Applications
         message "github-release" "Installing app to /Applications..." "info"
         sudo cp -R "${app_bundle}" /Applications/
 
-        # Unmount the DMG
         hdiutil detach "${mount_point}" -quiet
         ;;
     "")
@@ -405,7 +397,6 @@ function require_github_release() {
         ;;
     esac
 
-    # Find and install the binary (skip for DMG as it's already handled)
     if [[ "${archive_ext}" != "dmg" ]]; then
         if [[ -f "${temp_dir}/${binary_name}" ]]; then
             chmod +x "${temp_dir}/${binary_name}"
@@ -417,12 +408,10 @@ function require_github_release() {
         fi
     fi
 
-    # Clean up
     rm -rf "${temp_dir}"
 
     message "github-release" "Successfully installed ${binary_name} to ${install_dir}" "success"
 
-    # Check if install_dir is in PATH
     if ! echo "${PATH}" | grep -q "${install_dir}"; then
         message "github-release" "${install_dir} is not in your PATH" "warn"
         message "github-release" "Add 'export PATH=\"\$PATH:${install_dir}\"' to your shell config" "notice"
