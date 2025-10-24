@@ -35,7 +35,7 @@ main_apt() {
 }
 
 main() {
-    if [ -n "$1" ]; then
+    if [ -n "${1+x}" ]; then
         name="$1"
     else
         read -r -p "name: " name
