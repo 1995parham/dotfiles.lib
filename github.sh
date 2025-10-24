@@ -198,8 +198,10 @@ _github_release_build_url() {
 # Install binary from GitHub releases
 function require_github_release() {
     local repo=${1:?"GitHub repo (owner/name) is required"}
-    local binary_name=${2:?"binary name is required"}
-    local release_name=${3:?"release name is required (e.g., clash-aarch64-apple-darwin)"}
+    local binary_name
+    binary_name=$(eval echo "${2:?'binary name is required'}")
+    local release_name
+    release_name=$(eval echo "${3:?'release name is required (e.g., clash-aarch64-apple-darwin)'}")
     local archive_ext=${4:-""}
 
     local install_dir="${HOME}/.local/bin"
