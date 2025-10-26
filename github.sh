@@ -221,7 +221,7 @@ _github_release_save_version() {
     local version=$2
     local install_dir=$3
 
-    echo "${version}" > "${install_dir}/.${binary_name}.version"
+    echo "${version}" >"${install_dir}/.${binary_name}.version"
 }
 
 # Get installed version of binary
