@@ -219,18 +219,21 @@ _github_release_build_url() {
 _github_release_save_version() {
     local binary_name=$1
     local version=$2
-    local install_dir=$3
 
-    echo "${version}" >"${install_dir}/.${binary_name}.version"
+    local version_dir="${HOME}/.local/state/dotfiles.lib/versions"
+    mkdir -p "${version_dir}"
+
+    echo "${version}" >"${version_dir}/${binary_name}.version"
 }
 
 # Get installed version of binary
 _github_release_get_installed_version() {
     local binary_name=$1
-    local install_dir=$2
 
-    if [[ -f "${install_dir}/.${binary_name}.version" ]]; then
-        cat "${install_dir}/.${binary_name}.version"
+    local version_file="${HOME}/.local/state/dotfiles.lib/versions/${binary_name}.version"
+
+    if [[ -f "${version_file}" ]]; then
+        cat "${version_file}"
     fi
 }
 
@@ -251,22 +254,22 @@ function require_github_release() {
         return 1
     fi
 
-    # Check if binary exists and compare versions
-    if [[ -f "${install_dir}/${binary_name}" ]]; then
-        local installed_version
-        installed_version=$(_github_release_get_installed_version "${binary_name}" "${install_dir}")
+    # Check installed version (works for all installation types)
+    local installed_version
+    installed_version=$(_github_release_get_installed_version "${binary_name}")
 
-        # If version file doesn't exist, proceed with installation (replacing the binary)
-        if [[ -z "${installed_version}" ]]; then
-            message "github-release" "No version info found for ${binary_name}, reinstalling" "info"
+    if [[ -n "${installed_version}" ]]; then
         # If versions match, skip installation
-        elif [[ "${installed_version}" == "${latest_version}" ]]; then
+        if [[ "${installed_version}" == "${latest_version}" ]]; then
             running "require" " github-release ${repo} ${installed_version} (up to date)"
             return 0
         # If versions differ, upgrade
         else
             message "github-release" "Upgrading ${binary_name} from ${installed_version} to ${latest_version}" "info"
         fi
+    elif [[ -f "${install_dir}/${binary_name}" ]]; then
+        # Binary exists but no version info - reinstall
+        message "github-release" "No version info found for ${binary_name}, reinstalling" "info"
     fi
 
     action "require" " github-release ${repo}"
@@ -300,7 +303,7 @@ function require_github_release() {
     rm -rf "${temp_dir}"
 
     # Save version info after successful installation
-    _github_release_save_version "${binary_name}" "${latest_version}" "${install_dir}"
+    _github_release_save_version "${binary_name}" "${latest_version}"
 
     message "github-release" "Successfully installed ${binary_name} ${latest_version} to ${install_dir}" "success"
 
