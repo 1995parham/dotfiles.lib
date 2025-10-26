@@ -215,6 +215,25 @@ _github_release_build_url() {
     fi
 }
 
+# Save version info for installed binary
+_github_release_save_version() {
+    local binary_name=$1
+    local version=$2
+    local install_dir=$3
+
+    echo "${version}" > "${install_dir}/.${binary_name}.version"
+}
+
+# Get installed version of binary
+_github_release_get_installed_version() {
+    local binary_name=$1
+    local install_dir=$2
+
+    if [[ -f "${install_dir}/.${binary_name}.version" ]]; then
+        cat "${install_dir}/.${binary_name}.version"
+    fi
+}
+
 # Install binary from GitHub releases
 function require_github_release() {
     local repo=${1:?"GitHub repo (owner/name) is required"}
@@ -226,22 +245,36 @@ function require_github_release() {
     local install_dir="${HOME}/.local/bin"
     mkdir -p "${install_dir}"
 
+    # Get latest version first
+    local latest_version
+    if ! latest_version=$(_github_release_get_latest_version "${repo}"); then
+        return 1
+    fi
+
+    # Check if binary exists and compare versions
     if [[ -f "${install_dir}/${binary_name}" ]]; then
-        running "require" " github-release ${repo} (already installed)"
-        return 0
+        local installed_version
+        installed_version=$(_github_release_get_installed_version "${binary_name}" "${install_dir}")
+
+        # If version file doesn't exist, proceed with installation (replacing the binary)
+        if [[ -z "${installed_version}" ]]; then
+            message "github-release" "No version info found for ${binary_name}, reinstalling" "info"
+        # If versions match, skip installation
+        elif [[ "${installed_version}" == "${latest_version}" ]]; then
+            running "require" " github-release ${repo} ${installed_version} (up to date)"
+            return 0
+        # If versions differ, upgrade
+        else
+            message "github-release" "Upgrading ${binary_name} from ${installed_version} to ${latest_version}" "info"
+        fi
     fi
 
     action "require" " github-release ${repo}"
 
-    local version
-    if ! version=$(_github_release_get_latest_version "${repo}"); then
-        return 1
-    fi
-
-    message "github-release" "Installing version ${version}" "info"
+    message "github-release" "Installing version ${latest_version}" "info"
 
     local download_url
-    download_url=$(_github_release_build_url "${repo}" "${version}" "${release_name}" "${archive_ext}")
+    download_url=$(_github_release_build_url "${repo}" "${latest_version}" "${release_name}" "${archive_ext}")
 
     local temp_dir
     temp_dir=$(mktemp -d)
@@ -266,7 +299,10 @@ function require_github_release() {
 
     rm -rf "${temp_dir}"
 
-    message "github-release" "Successfully installed ${binary_name} to ${install_dir}" "success"
+    # Save version info after successful installation
+    _github_release_save_version "${binary_name}" "${latest_version}" "${install_dir}"
+
+    message "github-release" "Successfully installed ${binary_name} ${latest_version} to ${install_dir}" "success"
 
     if ! echo "${PATH}" | grep -q "${install_dir}"; then
         message "github-release" "${install_dir} is not in your PATH" "warn"
