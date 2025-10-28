@@ -186,8 +186,8 @@ test_get_symlink_target_valid() {
     # The target should match the source (may be relative or absolute depending on readlink)
     # On macOS, readlink -f may add /private prefix to /var paths
     if [[ "${target}" != "${source_file}" ]] &&
-       [[ "${target}" != "source.txt" ]] &&
-       [[ "${target}" != "/private${source_file}" ]]; then
+        [[ "${target}" != "source.txt" ]] &&
+        [[ "${target}" != "/private${source_file}" ]]; then
         message "test" "_get_symlink_target returned incorrect target: ${target}" "error"
         cleanup_test_env
         return 1
